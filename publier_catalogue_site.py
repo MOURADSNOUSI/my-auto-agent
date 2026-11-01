@@ -106,12 +106,33 @@ def construire_catalogue(donnees):
     return catalogue
 
 
+def fusionner(existants, exportes):
+    """Met à jour les lots exportés sans retirer ceux ajoutés par d'autres outils du site.
+
+    Les champs exportés remplacent ceux du site; les champs propres au site (specs, ...) sont conservés.
+    """
+    if not isinstance(existants, list):
+        raise ValueError("Le catalogue du site doit contenir une liste de lots.")
+
+    a_ecrire = {lot["reference"]: lot for lot in exportes}
+    fusion = []
+    for lot in existants:
+        reference = lot.get("reference") if isinstance(lot, dict) else None
+        if reference in a_ecrire:
+            fusion.append({**lot, **a_ecrire.pop(reference)})
+        else:
+            fusion.append(lot)
+
+    return fusion + list(a_ecrire.values())
+
+
 def exporter(source, sortie):
     donnees = json.loads(source.read_text(encoding="utf-8"))
     catalogue = construire_catalogue(donnees)
+    existants = json.loads(sortie.read_text(encoding="utf-8")) if sortie.exists() else []
     sortie.parent.mkdir(parents=True, exist_ok=True)
     sortie.write_text(
-        json.dumps(catalogue, ensure_ascii=False, indent=2) + "\n",
+        json.dumps(fusionner(existants, catalogue), ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8"
     )
     return catalogue
@@ -130,7 +151,7 @@ def main():
     except (OSError, json.JSONDecodeError, ValueError) as erreur:
         parser.error(f"Export interrompu : {erreur}")
 
-    print(f"Lots exportés : {len(catalogue)}")
+    print(f"Lots exportés ou mis à jour : {len(catalogue)}; les autres lots du site sont conservés.")
     print(f"Catalogue local : {arguments.sortie}")
     print("Aucun commit, push ou déploiement effectué.")
 

@@ -21,4 +21,4 @@ Lancer depuis `my-auto-agent` :
 python3 publier_catalogue_site.py
 ```
 
-Le script écrit `../my-auto-export-site/my-auto-export/lots.json`. Il ne commit, ne pousse et ne déploie rien. Un push GitHub peut déclencher Cloudflare Pages; il exige une confirmation distincte. La liste initiale est vide jusqu'à validation des lots.
+Le script met à jour `../my-auto-export-site/my-auto-export/lots.json` : les lots approuvés sont ajoutés ou remplacent le lot de même référence, les autres lots du site (ajoutés par `ajouter_lot.py` ou `importer_wix.py`) sont conservés. Pour retirer un lot du site, supprime son entrée dans `lots.json`. Il ne commit, ne pousse et ne déploie rien. Un push GitHub peut déclencher Cloudflare Pages; il exige une confirmation distincte.

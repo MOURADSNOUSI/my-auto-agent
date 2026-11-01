@@ -1,7 +1,10 @@
+import json
+import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
-from publier_catalogue_site import construire_catalogue
+from publier_catalogue_site import construire_catalogue, exporter
 
 
 def lot_valide(**modifications):
@@ -74,6 +77,27 @@ class CatalogueSiteTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "dans le futur"):
             construire_catalogue({"lots": [lot_valide(fin_vente=expired)]})
+
+    def test_export_conserve_les_autres_lots_du_site(self):
+        site = [
+            {"reference": "MY-0001", "make": "Jeep", "model": "Wrangler"},
+            {"reference": "LOT-1", "make": "BMW", "model": "X1", "specs": [["Boîte", "Auto"]]},
+        ]
+
+        with tempfile.TemporaryDirectory() as temporaire:
+            dossier = Path(temporaire)
+            source = dossier / "lots_valides.json"
+            sortie = dossier / "lots.json"
+            source.write_text(json.dumps({"lots": [lot_valide(), lot_valide(reference="LOT-2")]}))
+            sortie.write_text(json.dumps(site))
+
+            exporter(source, sortie)
+            catalogue = json.loads(sortie.read_text(encoding="utf-8"))
+
+        self.assertEqual([lot["reference"] for lot in catalogue], ["MY-0001", "LOT-1", "LOT-2"])
+        self.assertEqual(catalogue[0], site[0])
+        self.assertEqual(catalogue[1]["model"], "X3")
+        self.assertEqual(catalogue[1]["specs"], [["Boîte", "Auto"]])
 
 
 if __name__ == "__main__":

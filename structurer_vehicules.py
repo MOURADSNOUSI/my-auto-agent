@@ -2,6 +2,8 @@ import json
 import re
 from pathlib import Path
 
+from ecarstrade import lire_fiche
+
 source = Path("vehicules_ecarstrade.json")
 destination = Path("vehicules_structures.json")
 
@@ -13,44 +15,24 @@ resultats = []
 
 for vehicule in vehicules_bruts:
     texte = vehicule["description_brute"]
-    lignes = [l.strip() for l in texte.splitlines() if l.strip()]
-
-    def chercher(pattern):
-        match = re.search(pattern, texte, re.IGNORECASE)
-        return match.group(1) if match else None
-
-    reference = chercher(r"#(\d+)")
-    date = chercher(r"\b(\d{2}/\d{4})\b")
-    km = chercher(r"([\d\s]+)\s*KM\b")
-    puissance = chercher(r"(\d+)\s*Hp")
-    pays = next(
-        (p for p in ["France", "Belgique", "Allemagne"]
-         if re.search(rf"(?m)^{p}$", texte)),
-        None
-    )
-
-    prix = chercher(r"ACHETER\s*([\d\s]+)\s*€")
+    caracteristiques = lire_fiche(texte)
+    reference = re.search(r"#(\d+)", texte)
+    reference = reference.group(1) if reference else None
 
     fiche = {
         "source": "ecarstrade",
         "reference": reference,
         "marque": vehicule["marque_recherchee"],
-        "designation": lignes[0],
-        "mise_en_circulation": date,
-        "kilometrage": (
-            int(re.sub(r"\s", "", km)) if km else None
-        ),
-        "puissance_ch": (
-            int(puissance) if puissance else None
-        ),
-        "pays": pays,
-        "prix_eur": (
-            int(re.sub(r"\s", "", prix)) if prix else None
-        ),
+        "designation": caracteristiques["designation"],
+        "mise_en_circulation": caracteristiques["mise_en_circulation"],
+        "kilometrage": caracteristiques["kilometrage"],
+        "puissance_ch": caracteristiques["puissance_ch"],
+        "pays": caracteristiques["pays"],
+        "prix_eur": caracteristiques["prix_achat_eur"],
         "prix_type": (
-            "prix_fixe" if prix else "offre"
+            "prix_fixe" if caracteristiques["prix_achat_eur"] is not None else "offre"
         ),
-        "tva_non_incluse": "TVA non incluse" in texte,
+        "tva_non_incluse": caracteristiques["tva_non_incluse"],
         "statut": "en_attente_validation"
     }
 
