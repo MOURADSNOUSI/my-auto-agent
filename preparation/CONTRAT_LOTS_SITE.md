@@ -1,5 +1,7 @@
 # Contrat des lots du site
 
+Pour la vue d'ensemble du dépôt (pipeline, commandes locales, tests), voir `README.md` à la racine.
+
 `lots_valides.json` est le fichier de validation interne. Un lot ne peut être exporté que si `publication_approuvee` et `disponibilite_verifiee` valent tous deux `true`.
 
 Champs requis :
