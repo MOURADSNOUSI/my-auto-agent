@@ -1,0 +1,12 @@
+{
+  "source": "demo",
+  "marque": "Mercedes-Benz",
+  "modele": "CLA 250e",
+  "annee": 2023,
+  "carburant": "Hybride rechargeable",
+  "kilometrage": 45000,
+  "prix_eur": 23500,
+  "pays": "Allemagne",
+  "photos": [],
+  "statut": "en_attente_validation"
+}
