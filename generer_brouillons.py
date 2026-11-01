@@ -135,7 +135,7 @@ Provenance : {formater_valeur(vehicule.get('pays'))}
 Prix : {prix}
 {mention_prix}
 
-Contact : contact.myautoexport@gmail.com
+Contact : contact@myautoexport.com
 Référence : {vehicule['reference']}
 Disponibilité et caractéristiques à confirmer.
 
