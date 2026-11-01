@@ -1,3 +1,27 @@
 {
-  "lots": []
+  "lots": [
+    {
+      "reference": "7750872",
+      "marque": "Porsche",
+      "modele": "Cayenne",
+      "version": "3.0 E-hybrid 5d 346kW",
+      "annee": 2024,
+      "kilometrage": 21632,
+      "motorisation": "Hybride (essence / électrique)",
+      "pays": "Belgique",
+      "prix_fournisseur_ht_eur": null,
+      "publication_approuvee": true,
+      "disponibilite_verifiee": true,
+      "url_source": "https://fr.ecarstrade.com/cars/7750872",
+      "statut_vente": "open",
+      "fin_vente": "2026-11-01T15:00:00Z",
+      "photos_autorisees": [
+        "https://fr.ecarstrade.com/thumbnails/carsphotos/7750001-7760000/7750872/photo_000/260x0__r.jpg",
+        "https://fr.ecarstrade.com/thumbnails/carsphotos/7750001-7760000/7750872/photo_001/160x0__r.jpg",
+        "https://fr.ecarstrade.com/thumbnails/carsphotos/7750001-7760000/7750872/photo_002/160x0__r.jpg",
+        "https://fr.ecarstrade.com/thumbnails/carsphotos/7750001-7760000/7750872/photo_003/160x0__r.jpg",
+        "https://fr.ecarstrade.com/thumbnails/carsphotos/7750001-7760000/7750872/photo_004/160x0__r.jpg"
+      ]
+    }
+  ]
 }
