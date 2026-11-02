@@ -2,67 +2,56 @@ import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-URL = "https://fr.ecarstrade.com/profile/selections"
-PROFIL = str(Path.home() / ".my-auto-agent-browser")
+from ecarstrade import session_favoris
+
 REFERENCE = "7750872"
 
-with sync_playwright() as p:
-    context = p.chromium.launch_persistent_context(
-        user_data_dir=PROFIL,
-        headless=False,
-        viewport={"width": 1400, "height": 900}
-    )
+with sync_playwright() as p, session_favoris(
+    p, viewport={"width": 1400, "height": 900}
+) as (context, page):
+    print("Ouvre la fiche Porsche Cayenne #7750872.")
+    print("Si une galerie apparaît, ouvre-la également.")
 
-    try:
-        page = context.pages[0] if context.pages else context.new_page()
-        page.goto(URL, wait_until="domcontentloaded")
+    input("Une fois la galerie ouverte, appuie sur Entrée...")
 
-        print("Ouvre la fiche Porsche Cayenne #7750872.")
-        print("Si une galerie apparaît, ouvre-la également.")
+    page = context.pages[-1]
 
-        input("Une fois la galerie ouverte, appuie sur Entrée...")
+    images = page.evaluate("""
+        () => {
+            const elements = document.querySelectorAll("img");
+            const resultat = [];
 
-        page = context.pages[-1]
+            for (const img of elements) {
+                const urls = [
+                    img.currentSrc,
+                    img.src,
+                    img.getAttribute("data-src")
+                ];
 
-        images = page.evaluate("""
-            () => {
-                const elements = document.querySelectorAll("img");
-                const resultat = [];
-
-                for (const img of elements) {
-                    const urls = [
-                        img.currentSrc,
-                        img.src,
-                        img.getAttribute("data-src")
-                    ];
-
-                    for (const url of urls) {
-                        if (url && url.includes("carsphotos")) {
-                            resultat.push(url);
-                        }
+                for (const url of urls) {
+                    if (url && url.includes("carsphotos")) {
+                        resultat.push(url);
                     }
                 }
-
-                return [...new Set(resultat)];
             }
-        """)
 
-        resultat = {
-            "reference": REFERENCE,
-            "url_fiche": page.url,
-            "images": images
+            return [...new Set(resultat)];
         }
+    """)
 
-        Path("galerie_7750872.json").write_text(
-            json.dumps(resultat, indent=2, ensure_ascii=False),
-            encoding="utf-8"
-        )
+    resultat = {
+        "reference": REFERENCE,
+        "url_fiche": page.url,
+        "images": images
+    }
 
-        print("URL :", page.url)
-        print("Photos trouvées :", len(images))
+    Path("galerie_7750872.json").write_text(
+        json.dumps(resultat, indent=2, ensure_ascii=False),
+        encoding="utf-8"
+    )
 
-        for i, url in enumerate(images, 1):
-            print(f"{i}. {url}")
+    print("URL :", page.url)
+    print("Photos trouvées :", len(images))
 
-    finally:
-        context.close()
+    for i, url in enumerate(images, 1):
+        print(f"{i}. {url}")

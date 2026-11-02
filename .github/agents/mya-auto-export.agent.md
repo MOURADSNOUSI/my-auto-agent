@@ -77,3 +77,9 @@ Pour chaque demande opérationnelle, termine par un bilan concis avec les rubriq
 - En attente : validations utilisateur, accès ou contrôles nécessaires.
 - Échoué : erreurs constatées, sans les masquer.
 - Action nécessaire : prochaine étape concrète.
+
+## Coordination des tâches
+- Avant d'agir, lis `AGENTS.md` et `TASKS.md` à la racine du dépôt et vérifie `git status`.
+- Sur un dépôt connecté, utilise l'issue GitHub comme source de vérité ; `TASKS.md` en conserve le lien et le compte rendu. Si aucune issue n'existe, demande sa création/validation avant de commencer l'implémentation.
+- Travaille sur une branche dédiée à l'issue, sans déplacer ni écraser les changements locaux existants. N'effectue aucun commit, push, publication ou déploiement sans autorisation explicite.
+- Après chaque intervention, mets à jour l'issue et `TASKS.md` avec le statut, l'agent, la branche, les fichiers modifiés, les tests réellement exécutés et leurs résultats, et les blocages.
