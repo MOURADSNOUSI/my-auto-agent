@@ -22,3 +22,17 @@ python3 publier_catalogue_site.py
 ```
 
 Le script écrit `../my-auto-export-site/my-auto-export/lots.json`. Il ne commit, ne pousse et ne déploie rien. Un push GitHub peut déclencher Cloudflare Pages; il exige une confirmation distincte. La liste initiale est vide jusqu'à validation des lots.
+
+## Envoi au site en brouillons (recommandé)
+
+Le site n'affiche plus `lots.json` depuis la refonte du catalogue. Utiliser plutôt :
+
+```bash
+python3 envoyer_brouillons_site.py            # aperçu, rien n'est envoyé
+MYAUTO_AGENT_TOKEN=... python3 envoyer_brouillons_site.py --envoyer
+```
+
+Chaque lot approuvé devient un brouillon non publié `EC-<référence>` (vente directe, statut `stock`) via l'outil MCP
+`importer_brouillon`. Un lot dont `fin_vente` est passée est écarté. Un brouillon existant n'est jamais modifié.
+Prérequis : secret `AGENT_TOKEN` déclaré sur le Worker (même valeur que `MYAUTO_AGENT_TOKEN`) et réglage
+« Écriture autorisée à l'agent » activé dans `/admin`. La publication se fait ensuite à la main dans `/admin`.
